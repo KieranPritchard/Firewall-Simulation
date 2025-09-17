@@ -13,7 +13,18 @@ def make_sender_packets():
     return packets
 
 def make_receiver_packets():
-    return
+    packets = []
+
+    for x in range(255):
+        octet_one = randint(1,255)
+        octet_two = randint(1,255)
+        octet_three = randint(1,255)
+        octet_four = randint(1,255)
+
+        new_packet = {"ip": f"{octet_one}.{octet_two}.{octet_three}.{octet_four}", "port": randint(1, 500)}
+        packets.append(new_packet)
+    
+    return packets
 
 def check_packets():
     return
