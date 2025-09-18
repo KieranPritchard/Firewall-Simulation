@@ -26,6 +26,20 @@ def make_receiver_packets():
     
     return packets
 
+def send_packet_out(packets, is_response):
+    if is_response:
+        packet_to_send == packets
+        return packet_to_send
+    else:
+        packet_to_send = packets[randint(0, packets.len())]
+        return packet_to_send
+
+def receive_packet(packet):
+    packet_port = packet.get("port")
+
+    if packet_port == 80:
+        send_packet_out(packet, True)
+
 def check_packets():
     return
 
