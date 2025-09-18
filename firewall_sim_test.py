@@ -40,8 +40,18 @@ def receive_packet(packet):
     if packet_port == 80:
         send_packet_out(packet, True)
 
-def check_packets():
-    return
+def check_packets(rules, packet):
+    for rule in rules:
+        rule_ip = rule.get("ip")
+        rule_port = rule.get("port")
+        packet_ip = packet.get("ip")
+        packet_port = packet.get("port")
+
+        if rule_ip == packet_ip and rule_port == packet_port:
+            if rule.get("action") == "allow":
+                receive_packet(packet)
+            else:
+                print("packet denyed")
 
 def main():
     return
