@@ -1,7 +1,24 @@
 from random import randint
 
-def add_rules():
-    return
+def create_basic_rules(packets):
+    rules_to_make = randint(1, 10)
+    selected_packets = []
+    rules = []
+
+    for packet in packets:
+        packet_port = packet.get("port")
+        if packet_port == 22:
+            selected_packets.append(packet)
+
+    for rule in rules_to_make:
+        selected_packet = selected_packets[0, selected_packets.len()]
+
+        rule_ip = selected_packet.get("ip")
+        rule_port = selected_packet.get("port")
+
+        rules.append({"ip": rule_ip, "port": rule_port})
+
+    return rules
 
 def make_sender_packets():
     packets = []
