@@ -10,8 +10,9 @@ def create_basic_rules(packets):
         if packet_port == 22:
             selected_packets.append(packet)
 
-    for rule in rules_to_make:
-        selected_packet = selected_packets[0, selected_packets.len()]
+    for rule in range(rules_to_make):
+        random_packet = randint(0, len(selected_packets)) - 1
+        selected_packet = selected_packets[random_packet] 
 
         rule_ip = selected_packet.get("ip")
         rule_port = selected_packet.get("port")
@@ -48,7 +49,8 @@ def send_packet_out(packets, is_response):
         packet_to_send == packets
         return packet_to_send
     else:
-        packet_to_send = packets[randint(0, packets.len())]
+        random_packet = randint(0, len(packets) -1)
+        packet_to_send = packets[random_packet]
         return packet_to_send
 
 def receive_packet(packet):
@@ -71,7 +73,14 @@ def check_packets(rules, packet):
                 print("packet denyed")
 
 def main():
-    return
+    sender_packets = make_sender_packets()
+    recevier_packets = make_receiver_packets()
+    rules = create_basic_rules(recevier_packets)
+    
+    while True:
+        send_packet = send_packet_out(sender_packets, False)
+        check_packets(rules, send_packet)
+
 
 if __name__ == "__main__":
     main()
