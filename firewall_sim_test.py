@@ -11,7 +11,7 @@ def create_basic_rules(packets):
     if not selected_packets:
         return []
 
-    rules_to_make = random.randint(1, 100)
+    rules_to_make = random.randint(5, 150)
     rules = []
 
     for _ in range(rules_to_make):
@@ -92,11 +92,20 @@ def main():
     receiver_packets = make_receiver_packets()
     rules = create_basic_rules(receiver_packets)
 
-    # Process outgoing packets
-    process_packets(sender_packets, rules, "OUTGOING")
+    combined = [("OUTGOING", p) for p in sender_packets] + \
+            [("INCOMING", p) for p in receiver_packets]
 
-    # Process incoming packets
-    process_packets(receiver_packets, rules, "INCOMING")
-    
+    random.shuffle(combined)
+
+    while combined:
+        direction, packet = combined.pop()
+        checked_packet, action = check_packets(rules, packet)
+
+        if action == "allow":
+            print(f"[{direction}] Allowed Packet: {checked_packet}")
+        else:
+            print(f"[{direction}] Denied Packet: {checked_packet}")
+
+
 if __name__ == "__main__":
     main()
