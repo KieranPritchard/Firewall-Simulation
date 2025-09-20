@@ -1,22 +1,28 @@
 import random
 
 def create_basic_rules(packets):
-    rules_to_make = random.randint(1, 10)
-    selected_packets = []
+    vulnerable_ports = [
+        20,21,22,23,25,53,67,68,69,80,443,110,143,
+        137,138,139,445,123,161,5060,5061,554,3306,
+        5432,1433,27017,3389,5900,5000,8000,8080,8443
+    ]
+
+    selected_packets = [p for p in packets if p["port"] in vulnerable_ports]
+    if not selected_packets:
+        return []
+
+    rules_to_make = random.randint(1, 100)
     rules = []
 
-    for packet in packets:
-        packet_port = packet.get("port")
-        if packet_port == 22 or 21 or 23:
-            selected_packets.append(packet)
-
-    for rule in range(rules_to_make):
+    for _ in range(rules_to_make):
         selected_packet = random.choice(selected_packets)
+        rule_ip = selected_packet["ip"]
+        rule_port = selected_packet["port"]
+        action = random.choice(["allow", "deny"])
 
-        rule_ip = selected_packet.get("ip")
-        rule_port = selected_packet.get("port")
-
-        rules.append({"ip": rule_ip, "port": rule_port, "action": "deny"})
+        rule = {"ip": rule_ip, "port": rule_port, "action": action}
+        if rule not in rules:  # optional de-duplication
+            rules.append(rule)
 
     return rules
 
@@ -43,27 +49,17 @@ def make_receiver_packets():
 
     for i in range(255//5 * 2):
         random_index = random.randint(0,254)
-        vulnerable_ports = [21,22,23]
+        vulnerable_ports = [
+            20,21,22,23,25,53,67,68,69,80,443,
+            110,143,137,138,139,445,123,161,5060,
+            5061,554,3306,5432,1433,27017,3389,5900,
+            5000,8000,8080,8443
+        ]
         random_port = random.choice(vulnerable_ports)
         packet = packets[random_index]
         packet.update({"port": random_port})
     
     return packets
-
-def send_packet_out(packets, is_response):
-    if is_response:
-        packet_to_send == packets
-        return packet_to_send
-    else:
-        random_packet = random.choice(packets)
-        packet_to_send = random_packet
-        return packet_to_send
-
-def receive_packet(packet):
-    packet_port = packet.get("port")
-
-    if packet_port == 80:
-        send_packet_out(packet, True)
 
 def check_packets(rules, packet):
     for rule in rules:
@@ -78,38 +74,29 @@ def check_packets(rules, packet):
             else:
                 return packet, "deny"
             
-    # if no rule matched, default to deny
-    return packet, "deny"
+    # if no rule matched, default to allow
+    return packet, "allow"
+
+def process_packets(packets, rules, direction):
+    while packets:
+        packet = packets.pop(random.randrange(len(packets)))
+        checked_packet, action = check_packets(rules, packet)
+
+        if action == "allow":
+            print(f"[{direction}] Allowed Packet: {checked_packet}")
+        else:
+            print(f"[{direction}] Denied Packet: {checked_packet}")
 
 def main():
     sender_packets = make_sender_packets()
     receiver_packets = make_receiver_packets()
     rules = create_basic_rules(receiver_packets)
+
+    # Process outgoing packets
+    process_packets(sender_packets, rules, "OUTGOING")
+
+    # Process incoming packets
+    process_packets(receiver_packets, rules, "INCOMING")
     
-    while True:
-        send_packet = send_packet_out(sender_packets, False)
-        if not send_packet:
-            break  # stop when no packets left
-
-        checked_packet, action = check_packets(rules, send_packet)
-        
-        if action == "allow":
-            print(f"Allowed Packet: {checked_packet}")
-            receive_packet(checked_packet)
-        else:
-            print(f"Denied Packet: {checked_packet}")
-
-        send_packet = send_packet_out(receiver_packets, False)
-        if not send_packet:
-            break
-
-        checked_packet, action = check_packets(rules, send_packet)
-        
-        if action == "allow":
-            print(f"Allowed Packet: {checked_packet}")
-            receive_packet(checked_packet)
-        else:
-            print(f"Denied Packet: {checked_packet}")
-
 if __name__ == "__main__":
     main()
