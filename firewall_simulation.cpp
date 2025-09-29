@@ -1,12 +1,28 @@
 #include <iostream>
+#include <vector>
 #include <string>
-#include <cstdlib>
+#include <unordered_set>
+#include <random>
 #include <ctime>
+#include <cstdlib>
 
 using namespace std;
 
 // This seeds the random number so it is completely different each time
 srand(time(0));
+
+// Structs for certain elements
+struct Packet {
+    string ip;
+    int port;
+    string prot; // "tcp" or "udp"
+};
+
+struct Rule{
+    string ip;
+    int port;
+    string action; // "allow" or "deny"
+};
 
 string make_ip_range(bool range_type){
     if(range_type){
