@@ -139,6 +139,58 @@ vector<Packet> make_receiver_packets() {
     return packets;
 }
 
+vector<Rule> create_basic_rules(const vector<Packet>& packets){
+    // List of vulnerable ports
+    vector<int> vulnerable_ports = {
+        20,21,22,23,25,53,67,68,69,80,443,110,143,
+        137,138,139,445,123,161,5060,5061,554,3306,
+        5432,1433,27017,3389,5900,5000,8000,8080,8443
+    };
+
+    vector<int> selected_indices;
+    for (size_t i = 0; i < packets.size(); ++i) {
+        int p = packets[i].port;
+        for (int vp : vulnerable_ports) {
+            if (p == vp) {
+                selected_indices.push_back(static_cast<int>(i));
+                break;
+            }
+        }
+    }
+
+    if (selected_indices.empty()) {
+        return {}; // no vulnerable packets -> no rules
+    }
+
+    int rules_to_make = rand() % 246 + 5; // 5..250
+    vector<Rule> rules;
+    rules.reserve(min((size_t)rules_to_make, selected_indices.size()));
+
+    for (int i = 0; i < rules_to_make; ++i) {
+        // pick a random vulnerable packet
+        int pick_idx = selected_indices[rand() % selected_indices.size()];
+        const Packet& sp = packets[pick_idx];
+
+        Rule r;
+        r.ip = sp.ip;
+        r.port = sp.port;
+        r.action = (rand() % 2 == 0 ? "allow" : "deny");
+
+        // optional de-duplication: ensure the same rule isn't already present
+        bool exists = false;
+        for (const Rule& ex : rules) {
+            if (ex.ip == r.ip && ex.port == r.port && ex.action == r.action) {
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) rules.push_back(r);
+    }
+
+    return rules;
+}
+
+
 int main(){
     // This seeds the random number so it is completely different each time
     srand(time(0));
