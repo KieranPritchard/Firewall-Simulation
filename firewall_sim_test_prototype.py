@@ -1,5 +1,6 @@
 import random
 
+# Function to make range of ip addresses either as private or public.
 def make_ip_range(range_type):
     if range_type == "private":
         ranges = [
@@ -12,6 +13,7 @@ def make_ip_range(range_type):
     else:
         return ".".join(str(random.randint(1,255)) for _ in range(4))
 
+# This creates basic firewall rules from an 
 def create_basic_rules(packets):
     vulnerable_ports = [
         20,21,22,23,25,53,67,68,69,80,443,110,143,
@@ -19,10 +21,12 @@ def create_basic_rules(packets):
         5432,1433,27017,3389,5900,5000,8000,8080,8443
     ]
 
+    # Selects packets based on vulnerable portts
     selected_packets = [p for p in packets if p["port"] in vulnerable_ports]
     if not selected_packets:
         return []
 
+    # creates rules based on the random amount from the selcted packets
     rules_to_make = random.randint(5, 250)
     rules = []
 
@@ -38,6 +42,7 @@ def create_basic_rules(packets):
 
     return rules
 
+# Makes sender packets with bias towards more popular ports
 def make_sender_packets():
     packets = []
     packet_count = random.randint(200, 500)
@@ -58,7 +63,7 @@ def make_sender_packets():
     
     return packets
 
-
+# Creates receiver packets with same weighting
 def make_receiver_packets():
     packets = []
     packet_count = random.randint(200, 500)
@@ -91,6 +96,8 @@ def make_receiver_packets():
 
     return packets
 
+
+# This checks packets based rules that are created
 def check_packets(rules, packet):
     for rule in rules:
         rule_ip = rule.get("ip")
@@ -107,6 +114,7 @@ def check_packets(rules, packet):
     # if no rule matched, default to allow
     return packet, "allow"
 
+# This processes the packets
 def process_packets(packets, rules, direction):
     while packets:
         packet = packets.pop(random.randrange(len(packets)))
@@ -121,6 +129,7 @@ def main():
     receiver_packets = make_receiver_packets()
     rules = create_basic_rules(receiver_packets)
 
+    # Combines ingoing and outgoing to randomise the output and rules
     combined = [("OUTGOING", p) for p in sender_packets] + \
             [("INCOMING", p) for p in receiver_packets]
 
