@@ -204,8 +204,61 @@ pair<Packet,string> check_packets(const vector<Rule>& rules, const Packet& packe
     return {packet, "allow"};
 }
 
+void process_packets(vector<Packet>& packets, const vector<Rule>& rules, const string& direction){
+    while (!packets.empty()) {
+        int idx = rand() % packets.size();
+        Packet packet = packets[idx];
+        packets.erase(packets.begin() + idx);
 
-int main(){
-    // This seeds the random number so it is completely different each time
+        auto [checked_packet, action] = check_packets(rules, packet);
+        
+        if (action == "allow") {
+            cout << "[" << direction << "] Allowed Packet: {ip=" << checked_packet.ip
+                << ", port=" << checked_packet.port
+                << ", proto=" << checked_packet.proto << "}" << endl;
+        } else {
+            cout << "[" << direction << "] Denied Packet: {ip=" << checked_packet.ip
+                << ", port=" << checked_packet.port
+                << ", proto=" << checked_packet.proto << "}" << endl;
+        }
+    }
+}
+
+int main() {
     srand(time(0));
+
+    vector<Packet> sender_packets = make_sender_packets();
+    vector<Packet> receiver_packets = make_receiver_packets();
+    vector<Rule> rules = create_basic_rules(receiver_packets);
+
+    // Combine into one mixed queue
+    vector<pair<string, Packet>> combined;
+    for (auto& p : sender_packets) combined.push_back({"OUTGOING", p});
+    for (auto& p : receiver_packets) combined.push_back({"INCOMING", p});
+
+    // Shuffle combined
+    for (int i = combined.size() - 1; i > 0; --i) {
+        int j = rand() % (i + 1);
+        swap(combined[i], combined[j]);
+    }
+
+    // Process combined
+    while (!combined.empty()) {
+        auto [direction, packet] = combined.back();
+        combined.pop_back();
+
+        auto [checked_packet, action] = check_packets(rules, packet);
+
+        if (action == "allow") {
+            cout << "[" << direction << "] Allowed Packet: {ip=" << checked_packet.ip
+                << ", port=" << checked_packet.port
+                << ", proto=" << checked_packet.proto << "}" << endl;
+        } else {
+            cout << "[" << direction << "] Denied Packet: {ip=" << checked_packet.ip
+                << ", port=" << checked_packet.port
+                << ", proto=" << checked_packet.proto << "}" << endl;
+        }
+    }
+
+    return 0;
 }
