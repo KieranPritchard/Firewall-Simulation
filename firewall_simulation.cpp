@@ -190,6 +190,20 @@ vector<Rule> create_basic_rules(const vector<Packet>& packets){
     return rules;
 }
 
+pair<Packet,string> check_packets(const vector<Rule>& rules, const Packet& packet) {
+    for (const Rule& rule : rules) {
+        if (rule.ip == packet.ip && rule.port == packet.port) {
+            if (rule.action == "allow") {
+                return {packet, "allow"};
+            } else {
+                return {packet, "deny"};
+            }
+        }
+    }
+    // default: allow
+    return {packet, "allow"};
+}
+
 
 int main(){
     // This seeds the random number so it is completely different each time
