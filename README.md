@@ -1,0 +1,65 @@
+# Firewall Packet Simulation
+<div align="center"> 
+  <img alt="GitHub Created At" src="https://img.shields.io/github/created-at/KieranPritchard/Firewall-Simulation"> 
+  <img alt="GitHub License" src="https://img.shields.io/github/license/KieranPritchard/Firewall-Simulation"> 
+  <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/t/KieranPritchard/Firewall-Simulation"> 
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/KieranPritchard/Firewall-Simulation"> 
+  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/KieranPritchard/Firewall-Simulation"> 
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/KieranPritchard/Firewall-Simulation"> 
+</div>
+
+## Project Description
+
+### Objective
+To simulate basic network packet flow and firewall behavior using both C++ and Python, to build an understanding of packet inspection, and rule-based filtering.
+
+### Features
+
+* Simulates both incoming and outgoing via fake network packets.
+* Randomly generates dummy IP addresses, ports, and protocols (TCP/UDP).
+* Dynamically creates firewall rules to allow or deny traffic.
+* Uses a list of common vulnerable ports for realistic simulation.
+* Combines sender and receiver traffic for randomized processing order.
+* Includes both Python and C++ versions for comparison and practice with the latter.
+* Comes with a Bash helper script for compiling C++.
+
+### Technologies and Tools Used
+
+Languages: C++ and Python
+Libraries (Python): random
+Libraries (C++): <vector>, <string>, <unordered_set>, <random>, <ctime>
+Tools: Git, GitHub, VS Code, Bash, g++
+
+### Challenges Faced
+
+Coming up with a close to life solution for making pretend packets while keeping the logic simple enough for simulation was a key challenge. Translating the code between C++ and Python also highlighted differences in syntax, data handling, and randomization methods which stumped me in places.
+
+### Outcome
+
+Successfully created a console-based packet simulation tool that mimics basic firewall behavior. The program dynamically generates packets, constructs rules, and evaluates whether packets are allowed or denied.
+This project improved understanding of C++ randomization, Python translation, and network logic modeling.
+
+## How to Use the Project
+### Option 1 – Python Version
+- Run the Script
+```python firewall_simulation.py```
+- Observe the Output
+- The console will display packets being processed and either allowed or denied.
+- Customize or edit the lists of vulnerable ports or packet counts inside the file to adjust behavior.
+
+### Option 2 – C++ Version
+- Manual Compilation
+- Compile:
+```
+g++ -std=c++23 -Wall -Wextra -pedantic -O2 firewall_simulation.cpp -o firewall_simulation.exe
+```
+- Run: `./firewall_simulation.exe`
+- Using the Bash Script (Recommended)
+```
+bash compile.sh firewall_simulation.cpp
+```
+- This script verifies that g++ is installed.
+- Compiles with the latest C++ standard available (C++26 or C++23).
+- Outputs a clean .exe file ready to run.
+## License
+This project is licensed under the license file located in the root of the repository.
