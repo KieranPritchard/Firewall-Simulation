@@ -78,12 +78,14 @@ vector<Packet> make_sender_packets(){
         }
 
         Packet new_packet;
-        new_packet.ip = make_ip_range(true); // to make the ip private
+        new_packet.ip = make_ip_range(true);
         new_packet.port = chosen_port;
         new_packet.proto = (rand() % 2 == 0 ? "tcp" : "udp");
 
         packets.push_back(new_packet);
     }
+
+    return packets;
 }
 
 vector<Packet> make_receiver_packets() {
